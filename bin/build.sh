@@ -16,6 +16,7 @@ zip -r build/rails-upgrade-assistant.zip . \
   -x '*.git/*' \
   -x '.gitignore' \
   -x '*build/*' \
+  -x '*bin/*' \
   -x '.DS_Store'
 
 echo "✅ Archive created: build/rails-upgrade-assistant.zip"

@@ -1,31 +1,6 @@
 ---
-title: "Rails Upgrade Assistant Skill - Main Instructions"
-description: "Core instructions for Claude to analyze Rails projects, detect versions, enforce sequential upgrades, and generate comprehensive upgrade reports using Rails MCP tools"
-type: "skill-instructions"
-version: "1.0"
-for: "claude-projects"
-capabilities:
-  - rails-version-detection
-  - sequential-upgrade-enforcement
-  - custom-code-detection
-  - mcp-integration
-  - neovim-integration
-  - report-generation
-rails_versions: "7.0.x to 8.1.1"
-mcp_servers:
-  - rails-mcp-server
-  - neovim-mcp-server
-tags:
-  - rails-upgrade
-  - skill
-  - mcp
-  - automation
-  - version-detection
-category: "skill-core"
-priority: "critical"
-read_order: 1
-last_updated: "2025-11-01"
-copyright: Copyright (c) 2025 [Mario Alberto Chávez Cárdenas]
+name: rails-upgrade-assistant
+description: Analyzes Rails applications and generates comprehensive upgrade reports with breaking changes, deprecations, and step-by-step migration guides for Rails 7.0 through 8.1.1. Use when upgrading Rails applications, planning multi-hop upgrades, or querying version-specific changes.
 ---
 
 # Rails Upgrade Assistant Skill v1.0
@@ -87,10 +62,9 @@ If user requests a multi-hop upgrade (e.g., 7.0 → 8.1), you must:
 ## Available Resources
 
 ### Core Documentation
-- `README.md` - Human-readable overview
-- `QUICK-REFERENCE.md` - Command cheat sheet
-- `USAGE-GUIDE.md` - Comprehensive how-to
-- `TROUBLESHOOTING.md` - Common issues & solutions
+- `docs/README.md` - Human-readable overview
+- `docs/QUICK-REFERENCE.md` - Command cheat sheet
+- `docs/USAGE-GUIDE.md` - Comprehensive how-to
 
 ### Version-Specific Guides (Load as needed)
 - `version-guides/upgrade-7.0-to-7.1.md` - Rails 7.0 → 7.1
@@ -104,10 +78,82 @@ If user requests a multi-hop upgrade (e.g., 7.0 → 8.1), you must:
 - `reference/deprecations-timeline.md` - Deprecation tracking
 - `reference/testing-checklist.md` - Comprehensive testing
 
-### Examples
-- `examples/simple-upgrade.md` - Single version hop
-- `examples/complex-multi-hop.md` - Multi-version upgrade
-- `examples/custom-code-handling.md` - Preserving customizations
+---
+
+---
+
+## Report Generation Templates
+
+### Upgrade Report Template
+
+**Location:** `templates/upgrade-report-template.md`
+
+**Purpose:** Structure for generating comprehensive upgrade reports
+
+**When to use:** Every time you generate an upgrade report
+
+**Template Variables:**
+
+The template uses placeholder variables that you should replace with actual values:
+
+- `{FROM_VERSION}` - Current Rails version (e.g., "8.0.4")
+- `{TO_VERSION}` - Target Rails version (e.g., "8.1.1")
+- `{GENERATION_DATE}` - Current date
+- `{PROJECT_NAME}` - User's project name
+- `{UPGRADE_TYPE}` - "Single-hop" or "Multi-hop (hop X of Y)"
+- `{COMPLEXITY_STARS}` - ⭐ to ⭐⭐⭐⭐⭐
+- `{TIME_ESTIMATE}` - "2-4 hours", "1-2 weeks", etc.
+- `{RISK_LEVEL}` - "Low", "Medium", "High", "Very High"
+- `{BREAKING_CHANGES_COUNT}` - Number of breaking changes
+- `{CUSTOM_WARNINGS_COUNT}` - Number of custom code warnings
+- `{FILES_COUNT}` - Number of files to change
+- `{TESTS_COUNT}` - Number of tests in suite
+- `{HIGH_COUNT}` - Number of HIGH priority changes
+- `{MEDIUM_COUNT}` - Number of MEDIUM priority changes
+- `{LOW_COUNT}` - Number of LOW priority changes
+- `{PROJECT_ROOT}` - Full path to project
+- `{CURRENT_RAILS_VERSION}` - Detected Rails version
+- `{RUBY_VERSION}` - Detected Ruby version
+- `{APP_TYPE}` - "Full Stack" or "API-only"
+- `{DATABASE_TYPE}` - "PostgreSQL", "MySQL", "SQLite", etc.
+
+**Sections to populate:**
+
+1. `{HIGH_IMPACT_SUMMARY}` - Bulleted list of high-priority changes
+2. `{MEDIUM_IMPACT_SUMMARY}` - Bulleted list of medium-priority changes
+3. `{LOW_IMPACT_SUMMARY}` - Bulleted list of low-priority changes
+4. `{CUSTOM_CODE_LIST}` - Numbered list of detected customizations
+5. `{RECOMMENDATION_TEXT}` - Proceed/wait recommendation with reasoning
+6. `{PROJECT_STRUCTURE}` - ASCII tree of project directories
+7. `{GEMFILE_CONTENT}` - Relevant gems from Gemfile
+8. `{PRODUCTION_CONFIG}` - Key production.rb settings
+9. `{DATABASE_CONFIG}` - Database.yml configuration
+10. `{CUSTOM_CODE_DETAILS}` - Detailed custom code findings
+11. `{BREAKING_CHANGES_SECTION}` - Full breaking changes with OLD/NEW examples
+12. `{CUSTOM_WARNINGS_SECTION}` - Detailed warnings for each customization
+13. `{MIGRATION_GUIDE_SECTION}` - 8-phase step-by-step guide
+14. `{TESTING_CHECKLIST_SECTION}` - Complete testing procedures
+15. `{ROLLBACK_PLAN_SECTION}` - When and how to rollback
+16. `{RESOURCES_SECTION}` - Links to official documentation
+17. `{FILES_SUMMARY_SECTION}` - List of files to modify/create
+
+**Usage Instructions:**
+
+When generating an upgrade report:
+
+1. Read the template: `templates/upgrade-report-template.md`
+2. Use MCP tools to gather project information
+3. Load appropriate version guide(s)
+4. Replace all placeholder variables
+5. Populate all sections with specific content
+6. Generate complete report as output
+
+**Important:** 
+- Never show placeholder variables in the final report
+- All `{VARIABLES}` must be replaced with actual values
+- Each section must contain real, actionable content
+- Include OLD vs NEW code examples for every breaking change
+- Flag all custom code with ⚠️ warnings
 
 ---
 
@@ -135,7 +181,7 @@ If user requests a multi-hop upgrade (e.g., 7.0 → 8.1), you must:
 
 ## Workflow Instructions for Claude
 
-### Step 1: Detect Current Version and Project Info
+### Detect Current Version and Project Info
 
 **ALWAYS start with project analysis:**
 
@@ -151,3 +197,51 @@ If user requests a multi-hop upgrade (e.g., 7.0 → 8.1), you must:
    - project_type (api/full_stack)
    - project_root
 ```
+
+### Report Generation Workflow
+
+**Step 1: Load Template**
+
+- Read: `templates/upgrade-report-template.md`
+- Understand report structure
+- Note all placeholder variables
+
+**Step 2: Gather Project Data (Using MCP)**
+
+1. Call: railsMcpServer:project_info
+  - Extract: Rails version, structure, type
+
+2. Call: railsMcpServer:get_file
+  - Read: Gemfile, config files
+
+3. Call: railsMcpServer:list_files
+  - Find: Custom code patterns
+
+4. Store all data for template population
+
+**Step 3: Load Version Guide**
+
+1. Determine upgrade path (from → to)
+2. Load: version-guides/upgrade-X-to-Y.md
+3. Extract: Breaking changes, priorities
+
+**Step 4: Detect Custom Code**
+
+1. Search for custom middleware
+2. Find manual configurations
+3. Identify API-specific patterns
+4. Flag each with ⚠️ warning
+
+**Step 5: Populate Template**
+
+1. Replace all {PLACEHOLDER} variables
+2. Fill in each section with actual content
+3. Include OLD vs NEW examples
+4. Add custom warnings
+5. Generate complete report
+
+**Step 6: Deliver Report**
+
+1. Present complete markdown report
+2. Offer to save as file
+3. Offer interactive mode (if Neovim available)
